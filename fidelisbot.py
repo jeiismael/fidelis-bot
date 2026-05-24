@@ -332,72 +332,9 @@ async def admin_command_error(ctx, error):
         await ctx.send("You need administrator permission to use this command.")
 
 # ===== call points ===== #
-def load_clan_points():
-    try:
-        csv_url = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=csv&gid={WORKSHEET_GID}"
-        response = requests.get(csv_url, timeout=10)
-        response.raise_for_status()
-
-        reader = csv.reader(io.StringIO(response.text))
-        rows = list(reader)
-
-        if not rows:
-            return {}
-
-        points_map = {}
-
-        header_values = {cell.strip().lower() for cell in rows[0]} if rows else set()
-        start_index = 1 if {"name", "ign", "in-game name", "points"} & header_values else 0
-
-        for row in rows[start_index:]:
-            # A/B pair
-            if len(row) > 1:
-                name_a = row[0].strip()
-                points_a = row[1].strip()
-
-                if name_a:
-                    points_map[name_a.lower()] = {
-                        "name": name_a,
-                        "points": points_a if points_a else "0"
-                    }
-
-            # D/E pair
-            if len(row) > 4:
-                name_d = row[3].strip()
-                points_d = row[4].strip()
-
-                if name_d:
-                    points_map[name_d.lower()] = {
-                        "name": name_d,
-                        "points": points_d if points_d else "0"
-                    }
-
-        return points_map
-
-    except requests.RequestException as e:
-        print(f"Failed to load clan points from Google Sheet: {e}")
-        return {}
-    except Exception as e:
-        print(f"Unexpected error while loading clan points: {e}")
-        return {}
-    
+# ===== points command ===== #
 @bot.command()
 async def points(ctx, *, name=None):
-    points_map = load_clan_points()
-
-    if name is None:
-        # fallback to nickname, then username
-        target_name = ctx.author.nick if ctx.author.nick else ctx.author.name
-    else:
-        target_name = name.strip()
-
-    lookup = target_name.lower()
-
-    if lookup not in points_map:
-        await ctx.send(f"❌ Could not find points for **{target_name}**.")
-        return
-
-    entry = points_map[lookup]
-    await ctx.send(f"**{entry['name']}** has **{entry['points']}** points.")
+    await ctx.send("This feature has been discontinued. Proceed to our website to view your points and other functions: https://fidelisclan.netlify.app")
 # ===== Run bot =====
 bot.run(TOKEN)
