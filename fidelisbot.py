@@ -9,6 +9,22 @@ from dotenv import load_dotenv
 import csv
 import io
 import requests
+from flask import Flask
+from threading import Thread
+
+# ===== Keep Alive =====
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
 # ================= CONFIG =================
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -337,4 +353,5 @@ async def admin_command_error(ctx, error):
 async def points(ctx, *, name=None):
     await ctx.send("This feature has been discontinued. Proceed to our website to view your points and other functions: https://fidelisclan.netlify.app")
 # ===== Run bot =====
+keep_alive()
 bot.run(TOKEN)
