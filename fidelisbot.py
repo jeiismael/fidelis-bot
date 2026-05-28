@@ -347,6 +347,20 @@ async def admin_command_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         await ctx.send("You need administrator permission to use this command.")
 
+
+# ===== Purge command =====
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def purge(ctx, amount: int = 100):
+    await ctx.message.delete()
+    deleted = await ctx.channel.purge(limit=amount)
+    confirmation = await ctx.send(f"🗑️ Deleted {len(deleted)} messages.", )
+    await confirmation.delete(delay=3)
+
+@purge.error
+async def purge_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("You need administrator permission to use this command.")
 # ===== call points ===== #
 # ===== points command ===== #
 @bot.command()
