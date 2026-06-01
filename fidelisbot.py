@@ -372,7 +372,26 @@ async def points(ctx, *, name=None):
 from deep_translator import GoogleTranslator
 
 @bot.command()
-async def translate(ctx, target_lang: str = "english"):
+async def translate(ctx, *, target_lang: str = "english"):
+    # Language shortcuts
+    shortcuts = {
+        "chinese": "chinese (simplified)",
+        "cn": "chinese (simplified)",
+        "zh": "chinese (simplified)",
+        "jp": "japanese",
+        "kr": "korean",
+        "ru": "russian",
+        "es": "spanish",
+        "fr": "french",
+        "de": "german",
+        "it": "italian",
+        "pt": "portuguese",
+        "ar": "arabic",
+        "ko": "korean",
+    }
+
+    target_lang = shortcuts.get(target_lang.lower(), target_lang.lower())
+
     if ctx.message.reference is None:
         await ctx.send("❌ Please reply to a message to translate it.")
         return
