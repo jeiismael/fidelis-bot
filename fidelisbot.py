@@ -366,6 +366,29 @@ async def purge_error(ctx, error):
 @bot.command()
 async def points(ctx, *, name=None):
     await ctx.send("This feature has been discontinued. Proceed to our website to view your points and other functions: https://fidelisclan.netlify.app")
+
+
+# ===== Translate command =====
+from deep_translator import GoogleTranslator
+
+@bot.command()
+async def translate(ctx, target_lang: str = "english"):
+    if ctx.message.reference is None:
+        await ctx.send("❌ Please reply to a message to translate it.")
+        return
+
+    ref_message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+    text = ref_message.content
+
+    if not text:
+        await ctx.send("❌ The message has no text to translate.")
+        return
+
+    try:
+        translated = GoogleTranslator(source="auto", target=target_lang).translate(text)
+        await ctx.reply(f"🌐 **Translated to {target_lang.capitalize()}:**\n{translated}")
+    except Exception as e:
+        await ctx.send(f"❌ Translation failed. Make sure the language name is valid. Error: {e}")
 # ===== Run bot =====
 keep_alive()
 bot.run(TOKEN)
